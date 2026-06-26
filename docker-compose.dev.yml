@@ -1,0 +1,60 @@
+name: agent-rag
+
+services:
+  # postgres:
+  #   container_name: agent-rag-dev-db
+  #   image: postgres:16-alpine
+  #   environment:
+  #     POSTGRES_USER: ${POSTGRES_USER}
+  #     POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+  #     POSTGRES_DB: ${POSTGRES_DB}
+  #   ports:
+  #     - ${POSTGRES_PORT}:5432
+  #   volumes:
+  #     - agent-rag-postgres-data:/var/lib/postgresql/data
+  #   networks:
+  #     - agent-rag-network
+  #   healthcheck:
+  #     test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+  #     interval: 10s
+  #     timeout: 8s
+  #     retries: 5
+  #   restart: unless-stopped
+  
+  # mongodb:
+  #   container_name: agent-rag-dev-mongo
+  #   image: mongo:latest
+  #   ports:
+  #     - ${MONGO_PORT}:27017
+  #   environment:
+  #     MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME}
+  #     MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+  #   volumes:
+  #     - agent-rag-mongo-data:/data/db
+  #   networks:
+  #     - agent-rag-network
+  #   restart: unless-stopped
+  
+  qdrant:
+    container_name: agent-rag-dev-vector-db
+    image: qdrant/qdrant:latest
+    ports: 
+      - ${QDRANT_PORT}:6333
+    volumes: 
+      - agent-rag-qdrant-storage:/qdrant/storage
+    networks:
+      - agent-rag-network
+    restart: unless-stopped
+  
+volumes:
+  # agent-rag-postgres-data:
+  #   name: agent-rag-dev-postgres-data
+  # agent-rag-mongo-data:
+  #   name: agent-rag-dev-mongo-data
+  agent-rag-qdrant-storage:
+    name: agent-rag-dev-qdrant-data
+
+networks:
+  agent-rag-network:
+    name: agent-rag-dev-network
+    driver: bridge

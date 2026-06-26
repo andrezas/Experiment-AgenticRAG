@@ -1,0 +1,39 @@
+services:
+  sonarqube:
+    container_name: agent-rag-sonarqube
+    image: sonarqube:25.7.0.110598-community
+    ports:
+      - 9000:9000
+    environment:
+      SONAR_ES_BOOTSTRAP_CHECKS_DISABLE: "true"
+    volumes:
+      - sonarqube-data:/opt/sonarqube/data
+      - sonarqube-extensions:/opt/sonarqube/extensions
+      - sonarqube-logs:/opt/sonarqube/logs
+    networks:
+      - sonarqube-network
+    restart: unless-stopped
+
+  sonar-scanner:
+    container_name: agent-rag-sonar-scanner
+    image: sonarsource/sonar-scanner-cli:latest
+    depends_on:
+      - sonarqube
+    volumes:
+      - ./sonar_workspace:/usr/src
+    networks:
+      - sonarqube-network
+    restart: unless-stopped
+
+volumes:
+  sonarqube-data:
+    name: agent-rag-sonar-data
+  sonarqube-extensions:
+    name: agent-rag-sonar-extensions
+  sonarqube-logs:
+    name: agent-rag-sonar-logs
+
+networks:
+  sonarqube-network:
+    name: agent-rag-sonar-network
+    driver: bridge

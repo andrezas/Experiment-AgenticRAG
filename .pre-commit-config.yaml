@@ -1,0 +1,41 @@
+default_install_hook_types:
+  - pre-commit
+  - commit-msg
+
+repos:
+  - repo: https://github.com/compilerla/conventional-pre-commit
+    rev: v4.3.0
+    hooks:
+      - id: conventional-pre-commit
+        stages: [commit-msg]
+        args: []
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.15.0
+    hooks:
+      - id: ruff
+        types_or: [python, pyi]
+        args: [--fix]
+        files: ^src/
+        stages: [pre-commit]
+      - id: ruff-format
+        types_or: [python, pyi]
+        stages: [pre-commit]
+  - repo: https://github.com/executablebooks/mdformat
+    rev: 1.0.0
+    hooks:
+      - id: mdformat
+        name: Format Markdown files
+        args: [--wrap, "120", --number]
+        additional_dependencies:
+          - mdformat-gfm>=0.3.8
+        files: \.md$
+        stages: [pre-commit]
+  - repo: local
+    hooks:
+      - id: secscan
+        name: secscan
+        entry: uv run -- secscan
+        language: system
+        pass_filenames: false
+        always_run: true
+        verbose: true
