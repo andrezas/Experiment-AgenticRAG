@@ -15,6 +15,7 @@ async def index_context_to_qdrant(
     context_text: str, 
     collection_name: str, 
     metadata: dict,
+    test_context_id: str,
     qdrant_storage: QdrantStorage,
     embeddings: Embeddings
 ):
@@ -33,7 +34,6 @@ async def index_context_to_qdrant(
         logger.warning(f"Nenhum chunk gerado para a coleção {collection_name}")
         return
 
-    # Garante a criação da coleção isolada
     if not await qdrant_storage.collection_exists(collection_name):
         sample_embedding = embeddings.embed_query("teste")
         vector_size = len(sample_embedding)
@@ -47,15 +47,18 @@ async def index_context_to_qdrant(
 
     points = []
     for chunk, vector in zip(chunks, vectors):
-        vector = embeddings.embed_query(chunk)
+        # vector = embeddings.embed_query(chunk)
+        payload = {
+            "test_context_id": test_context_id,
+            "page_content": chunk,
+            "metadata": metadata
+        }
+        
         points.append(
             models.PointStruct(
                 id=str(uuid.uuid4()),
                 vector=vector,
-                payload={
-                    "page_content": chunk,
-                    "metadata": metadata
-                }
+                payload=payload
             )
         )
 

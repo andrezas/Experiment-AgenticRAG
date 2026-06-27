@@ -50,8 +50,8 @@ async def run_experiment():
             logger.error(f"Erro ao ler o arquivo {json_file}: {e}.")
             continue
 
-
         eval_name = data.get("eval_name", "eval_default")
+        collection_name = sanitize_collection_name(eval_name)
         results_list = data.get("results", [])
 
         logger.info(f"Processando {len(results_list)} testes contidos no arquivo JSON.")
@@ -66,33 +66,38 @@ async def run_experiment():
                 continue
 
             # Define o nome único e limpo para o espaço vetorial deste teste específico
-            unique_collection_name = sanitize_collection_name(f"col_{eval_name}_teste_{idx}")
+            test_context_id = f"{collection_name}_teste_{idx}"
 
             # Injeta o identificador único de volta no objeto do teste
-            result["espaco_vetorial_nome"] = unique_collection_name
+            result["espaco_vetorial_nome"] = collection_name
+            result["payload_filtering"] = test_context_id
 
             # Monta um dicionário de metadados para salvar junto aos vetores
             metadata = {
                 "test_idx": idx,
                 "selected_character": character,
-                "eval_name": eval_name,
+                "eval_name": collection_name,
                 "question": result.get("question", "")
             }
 
             # Executa a indexação isolada no Qdrant
             await index_context_to_qdrant(
                 context_text=context_text,
-                collection_name=unique_collection_name,
+                collection_name=eval_name,
                 metadata=metadata,
+                test_context_id=test_context_id,
                 qdrant_storage=qdrant_storage,
                 embeddings=embeddings
             )
 
-    # Sobrescreve o arquivo JSON original salvando a nova chave "espaco_vetorial_nome"
-    with open(json_path, 'w', encoding='utf-8') as f:
-        json.dump(data, f, ensure_ascii=False, indent=4)
+        # Sobrescreve o arquivo JSON original salvando a nova chave "espaco_vetorial_nome"
+        try:
+            with open(json_file, 'w', encoding='utf-8') as f:
+                json.dump(data, f, ensure_ascii=False, indent=4)
+        except Exception as e:
+            logger.error(f"Erro ao salvar atualizações em {json_file}: {e}")
 
-    logger.info(f"=== Experimento concluído! JSON atualizado em: {json_path} ===")
+    logger.info(f"=== Experimento concluído! JSON atualizado em: {json_file} ===")
     await qdrant_storage.close()
 
 
