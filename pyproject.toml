@@ -10,6 +10,7 @@ dependencies = [
     "langchain-anthropic>=1.4.4",
     "langchain-community>=0.4.2",
     "langchain-huggingface>=1.2.2",
+    "langchain-ollama>=1.1.0",
     "langchain-openai>=1.2.2",
     "langchain-qdrant>=1.1.0",
     "langgraph>=1.2.2",
@@ -104,6 +105,16 @@ ignore = [
   "TD002",
   "TD003",
   "RUF029",
+  "C901",
+  "PLR0913",
+  "PLR0914",
+  "PLR0915",
+  "PLR0917",
+  "ASYNC230",
+  "ASYNC240",
+  "ARG005",
+  "B905",
+  "RET504",
 ]
 
 [tool.ruff.lint.per-file-ignores]

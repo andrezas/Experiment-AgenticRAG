@@ -91,12 +91,16 @@ class QdrantStorage:
             raise
 
     async def search_points(
-        self, collection_name: str, query_vector: list[float], limit: int
+        self, collection_name: str, query_vector: list[float], limit: int, query_filter: models.Filter | None = None
     ) -> list[models.ScoredPoint]:
         try:
             Logger.info(f"Searching for {limit} nearest points in collection '{collection_name}'")
             hits = await self._client.query_points(
-                collection_name=collection_name, query=query_vector, limit=limit, with_payload=True
+                collection_name=collection_name,
+                query=query_vector,
+                limit=limit,
+                query_filter=query_filter,
+                with_payload=True,
             )
 
             Logger.info(f"Search completed, returning {len(hits.points)} hits.")
