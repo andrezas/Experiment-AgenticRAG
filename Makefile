@@ -109,3 +109,7 @@ index:
 eval:
 	@echo "A iniciar a indexação do haystack NOLIMA no Qdrant..."
 	uv run python -m src.experiments.nolima_eval
+
+plot:
+	@echo "A iniciar a plots do haystack NOLIMA..."
+	uv run python -m src.metrics.plots
