@@ -63,3 +63,6 @@ class NaiveRAG:
         answer = await chain.ainvoke(question)
 
         return {"answer": answer, "retrieved_chunks": retrieved_chunks_refs}
+
+
+# teste
