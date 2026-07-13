@@ -31,7 +31,6 @@ async def run_evaluation():
 
     llm = get_llm("Ollama", "llama3.1:8b", 0)
 
-    # 2. Instanciação dos Pipelines
     trad_pipeline = NaiveRAG(llm, qdrant_storage, embeddings)
     agen_pipeline = AgenticRAG(llm, qdrant_storage, embeddings)
 
@@ -45,7 +44,6 @@ async def run_evaluation():
     subdirectories = [d for d in base_dir.iterdir() if d.is_dir() and not d.name.startswith(".")]
     logger.info(f"Iniciando processamento de {len(subdirectories)} subdiretórios.")
 
-    # 3. Iteração sobre a estrutura de arquivos
     for subdir in tqdm(subdirectories, desc="Processando Subdiretórios"):
         json_files = list(subdir.glob("*.json"))
 
@@ -58,7 +56,7 @@ async def run_evaluation():
                 continue
 
             results_list = data.get("results", [])
-            modified = False  # Flag para saber se precisamos salvar o arquivo
+            modified = False
 
             for result in results_list:
                 question = result.get("question")
@@ -69,19 +67,16 @@ async def run_evaluation():
                     logger.warning(f"Teste ignorado (faltam metadados essenciais): {test_context_id}")
                     continue
 
-                # Opcional: Pular se o teste já foi avaliado anteriormente (retomada de falhas)
                 if "RAG" in result and "AgenticRAG" in result:
                     continue
 
                 try:
-                    # Executa RAG Tradicional
                     res_trad = await trad_pipeline.run(question, collection_name, test_context_id)
                     result["RAG"] = {
                         "retrieve_chunks": res_trad.get("retrieved_chunks", []),
                         "result": res_trad.get("answer", ""),
                     }
 
-                    # Executa Agentic RAG
                     res_agen = await agen_pipeline.run(question, collection_name, test_context_id)
                     result["AgenticRAG"] = {
                         "retrieve_chunks": res_agen.get("retrieved_chunks", []),
@@ -93,10 +88,8 @@ async def run_evaluation():
 
                 except Exception as e:
                     logger.error(f"Erro na inferência do teste {test_context_id}: {e}")
-                    # Continua para o próximo teste mesmo se um falhar
                     continue
 
-            # 4. Salva as atualizações de volta no mesmo arquivo JSON
             if modified:
                 try:
                     with Path(json_file).open("w", encoding="utf-8") as f:
