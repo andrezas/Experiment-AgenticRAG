@@ -18,7 +18,6 @@ class NaiveRAG:
         self.embeddings = embeddings
 
     async def run(self, question: str, collection_name: str, test_context_id: str) -> dict[str, Any]:
-        """Executa o RAG Tradicional e retorna a resposta acompanhada dos chunks validados."""
         search_result = await retrieve_chunks(
             query=question,
             collection_name=collection_name,
@@ -27,7 +26,6 @@ class NaiveRAG:
             embeddings=self.embeddings,
         )
 
-        # Armazena as referências completas dos chunks para validação posterior
         retrieved_chunks_refs = []
         context_chunks_texts = []
 
@@ -63,6 +61,3 @@ class NaiveRAG:
         answer = await chain.ainvoke(question)
 
         return {"answer": answer, "retrieved_chunks": retrieved_chunks_refs}
-
-
-# teste

@@ -20,12 +20,10 @@ class AgenticRAG:
     async def run(
         self, question: str, collection_name: str, test_context_id: str, max_iterations: int = 5
     ) -> dict[str, Any]:
-        """Executa o Agentic RAG com loops de busca iterativos, rastreando apenas os IDs acessados."""
         retrieved_chunks_refs = []
         seen_chunk_ids = set()
 
         async def search_context_tool(search_query: str) -> str:
-            """Busca trechos relevantes no texto baseado em uma query de pesquisa."""
             search_result = await retrieve_chunks(
                 query=search_query,
                 collection_name=collection_name,

@@ -20,7 +20,6 @@ async def index_context_to_qdrant(
     qdrant_storage: QdrantStorage,
     embeddings: Embeddings,
 ):
-    """Divide o context_text em chunks e indexa na coleção informada do Qdrant."""
     text_splitter = RecursiveCharacterTextSplitter(
         chunk_size=512,
         chunk_overlap=100,
@@ -42,7 +41,6 @@ async def index_context_to_qdrant(
 
     points = []
     for chunk, vector in zip(chunks, vectors):
-        # vector = embeddings.embed_query(chunk)
         payload = {"test_context_id": test_context_id, "page_content": chunk, "metadata": metadata}
 
         points.append(models.PointStruct(id=str(uuid.uuid4()), vector=vector, payload=payload))
