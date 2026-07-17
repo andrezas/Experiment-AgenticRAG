@@ -20,7 +20,6 @@ logger = logging.getLogger(__name__)
 async def run_evaluation():
     logger.info("=== Iniciando Avaliação de Inferência (RAG vs AgenticRAG) ===")
 
-    # 1. Configuração de Infraestrutura
     qdrant_host = os.getenv("QDRANT_HOST", "localhost")
     qdrant_port = int(os.getenv("QDRANT_PORT", 6333))
     qdrant_storage = QdrantStorage(host=qdrant_host, port=qdrant_port)

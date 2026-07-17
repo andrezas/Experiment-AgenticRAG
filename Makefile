@@ -112,4 +112,4 @@ eval:
 
 plot:
 	@echo "A iniciar a plots do haystack NOLIMA..."
-	uv run python -m src.metrics.plots
+	uv run python -m src.metrics.statistical_analysis.py

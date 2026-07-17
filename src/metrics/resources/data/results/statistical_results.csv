@@ -1,0 +1,24 @@
+Analise,Metrica,Valor,IC_Lower,IC_Upper
+Acuracia Global,RAG Accuracy,0.4490716180371353,0.4380636604774536,0.4606100795755968
+Acuracia Global,AgenticRAG Accuracy,0.3412466843501326,0.3306366047745358,0.3519927055702917
+Acuracia Global,Diferenca (Agentic - RAG),-0.10782493368700269,-0.11949602122015918,-0.09588859416445622
+Teste de Hipotese (Global),McNemar p-value,7.790946994063092e-66,,
+Estatistica Descritiva,iterations_count (Média),1.5123342175066312,,
+Estatistica Descritiva,iterations_count (Desvio Padrão),1.2401008968965401,,
+Estatistica Descritiva,iterations_count (IQR),0.0,,
+Normalidade (Shapiro-Wilk),iterations_count p-value,1.1157367068190628e-92,,
+Normalidade (Shapiro-Wilk),depth p-value,2.336942724325429e-44,,
+Correlacao (Ponto-Bisserial),iterations_count vs agenticrag_correct (corr),-0.22089818723141863,,
+Correlacao (Ponto-Bisserial),iterations_count vs agenticrag_correct (p-value),5.388010733288663e-84,,
+Cenario: one_hop,RAG Accuracy,0.6177884615384616,0.5971153846153846,0.6384615384615384
+Cenario: one_hop,AgenticRAG Accuracy,0.41875,0.3975961538461538,0.4403846153846154
+Cenario: one_hop,Diferenca (Agentic - RAG),-0.19903846153846155,-0.22163461538461543,-0.17548076923076922
+Cenario: inv_one_hop,RAG Accuracy,0.6004807692307692,0.5793269230769231,0.6211538461538462
+Cenario: inv_one_hop,AgenticRAG Accuracy,0.42596153846153845,0.4048076923076923,0.44759615384615387
+Cenario: inv_one_hop,Diferenca (Agentic - RAG),-0.17451923076923076,-0.1980769230769231,-0.15048076923076925
+Cenario: inv_two_hop,RAG Accuracy,0.24142011834319527,0.22130177514792898,0.2621301775147929
+Cenario: inv_two_hop,AgenticRAG Accuracy,0.263905325443787,0.24377218934911243,0.2846301775147927
+Cenario: inv_two_hop,Diferenca (Agentic - RAG),0.02248520710059171,-0.0023668639053254226,0.047337278106508895
+Cenario: two_hop,RAG Accuracy,0.26272189349112424,0.24142011834319527,0.28402366863905326
+Cenario: two_hop,AgenticRAG Accuracy,0.21893491124260356,0.2,0.23846153846153847
+Cenario: two_hop,Diferenca (Agentic - RAG),-0.04378698224852068,-0.06686390532544378,-0.020710059171597656

@@ -25,7 +25,6 @@ def sanitize_collection_name(name: str) -> str:
 async def run_experiment():
     logger.info("=== Iniciando Experimento NOLIMA (Mapeamento de Espaços Vetoriais) ===")
 
-    # Configuração do cliente Qdrant (Pega do ambiente ou usa localhost)
     qdrant_host = os.getenv("QDRANT_HOST", "localhost")
     qdrant_port = int(os.getenv("QDRANT_PORT", 6333))
     qdrant_storage = QdrantStorage(host=qdrant_host, port=qdrant_port)
@@ -72,11 +71,9 @@ async def run_experiment():
 
                 test_context_id = f"{eval_name}_teste_{idx}"
 
-                # Injeta o identificador único de volta no objeto do teste
                 result["espaco_vetorial_nome"] = collection_name
                 result["payload_filtering"] = test_context_id
 
-                # Monta um dicionário de metadados para salvar junto aos vetores
                 metadata = {
                     "test_idx": idx,
                     "selected_character": character,
@@ -84,7 +81,6 @@ async def run_experiment():
                     "question": result.get("question", ""),
                 }
 
-                # Executa a indexação isolada no Qdrant
                 await index_context_to_qdrant(
                     context_text=context_text,
                     collection_name=collection_name,
@@ -94,7 +90,6 @@ async def run_experiment():
                     embeddings=embeddings,
                 )
 
-            # Sobrescreve o arquivo JSON original salvando a nova chave "espaco_vetorial_nome"
             try:
                 with Path(json_file).open("w", encoding="utf-8") as f:
                     json.dump(data, f, ensure_ascii=False, indent=4)
