@@ -102,14 +102,18 @@ ty: ## Roda verificação de tipagem
 
 .PHONY: index
 
-index:
-	@echo "A iniciar a indexação do haystack NOLIMA no Qdrant..."
-	uv run python -m src.experiments.index_nolima
+nolima-tests:
+	@echo "Executando geração de testes do NoLiMa..."
+	cd src/NoLiMa && sh run_tests.sh
 
-eval:
-	@echo "A iniciar a indexação do haystack NOLIMA no Qdrant..."
+index:
+	@echo "Iniciando a indexação do haystack NOLIMA no Qdrant..."
 	uv run python -m src.experiments.nolima_eval
 
+eval:
+	@echo "Iniciando a avaliação do haystack NOLIMA..."
+	uv run python -m src.experiments.evaluation
+
 plot:
-	@echo "A iniciar a plots do haystack NOLIMA..."
+	@echo "Iniciando a geração de plots do haystack NOLIMA..."
 	uv run python -m src.metrics.statistical_analysis.py

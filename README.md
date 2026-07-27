@@ -12,9 +12,9 @@ A concise description of the project.
   - [2. Configuração de Ambiente](#2-configura%C3%A7%C3%A3o-de-ambiente)
 - [Execução da Aplicação](#execu%C3%A7%C3%A3o-da-aplica%C3%A7%C3%A3o)
   - [Ambiente de Desenvolvimento](#ambiente-de-desenvolvimento)
-  - [Ambiente de Produção Simulado](#ambiente-de-produ%C3%A7%C3%A3o-simulado)
-  - [1. Gerar os builds](#1-gerar-os-builds)
-  - [2. Subir os contêineres](#2-subir-os-cont%C3%AAineres)
+  - [Geração de Casos de Teste (NoLiMa)](#gera%C3%A7%C3%A3o-de-casos-de-teste-nolima)
+  - [Indexação](#indexa%C3%A7%C3%A3o)
+  - [Avaliação (RAG e AgenticRAG)](#avalia%C3%A7%C3%A3o-rag-e-agenticrag)
 - [Fluxo de Desenvolvimento](#fluxo-de-desenvolvimento)
   - [Makefile](#makefile)
   - [Hooks de Pre-commit](#hooks-de-pre-commit)
@@ -26,11 +26,23 @@ A concise description of the project.
 
 ## Funcionalidades Principais
 
-TODO
+O principal objetivo deste repositório é conduzir experimentos comparando a eficácia da abordagem RAG tradicional com a
+abordagem AgenticRAG na recuperação e geração de respostas em contextos longos sem correspondência lexical explícita. O
+repositório oferece ferramentas para a geração de datasets de avaliação, indexação de documentos e execução de
+avaliações com diferentes abordagens.
+
+Os experimentos baseiam-se no benchmark NoLiMa (desenvolvido por Modarressi et al.). A base de dados utilizada provém do
+[repositório original do NoLiMa](https://github.com/adobe-research/NoLiMa). Foram feitos apenas alguns ajustes na
+geração para adaptação ao experimento e, para este estudo, **apenas os casos de teste com janela de contexto de 8k
+tokens (8.000 tokens) foram executados**. A avaliação considerou 7.540 instâncias, utilizando o banco de dados vetorial
+Qdrant com o modelo de embeddings `Qwen/Qwen3-Embedding-0.6B` e o modelo de linguagem `llama3.1:8b`.
 
 ## Visão Geral da Arquitetura
 
-TODO
+A arquitetura do experimento envolve as etapas de geração de dados base, indexação de contexto para recuperação, e
+orquestração de chamadas aos modelos de linguagem tanto no fluxo tradicional quanto com agentes.
+
+![Visão Geral da Arquitetura](caminho/para/imagem.png)
 
 ## Guia de Inicialização
 
@@ -65,28 +77,29 @@ TODO
 
    > Isso equivale a: `docker compose -f docker-compose.dev.yml --env-file .env up -d`
 
-### Ambiente de Produção Simulado
+### Geração de Casos de Teste (NoLiMa)
 
-Para rodar o projeto como se tivesse em um ambiente de produção, utilize os seguintes comandos com `env=prod`. Os
-seguintes arquivos serão utilizados:
-
-- `.env.production`
-- `docker-compose.prod.yml`
-
-### 1. Gerar os builds
-
-Execute o build completo dos serviços:
+Para gerar casos de teste a partir dos dados em `resources/data/haystack` e `resources/data/needlesets` (conforme o
+NoLiMa original), execute:
 
 ```bash
-make build env=prod
+make nolima-tests
 ```
 
-### 2. Subir os contêineres
+### Indexação
 
-Inicie os serviços com configuração de produção:
+Para realizar a indexação dos contextos dos casos de teste previamente gerados, utilize:
 
 ```bash
-make up env=prod
+make index
+```
+
+### Avaliação (RAG e AgenticRAG)
+
+Para gerar as avaliações com RAG e AgenticRAG pelos modelos configurados, execute:
+
+```bash
+make eval
 ```
 
 ## Fluxo de Desenvolvimento
