@@ -1,154 +1,139 @@
-# agent-rag
+# Avaliação de Modelos de Linguagem utilizando NoLiMa
 
-A concise description of the project.
+## 1. Resumo
 
-## Tabela de Conteúdos
+Este repositório contém a implementação utilizada para avaliar modelos de linguagem utilizando a metodologia **NoLiMa**.
+O projeto avalia se estratégias baseadas em recuperação podem mitigar as limitações de recuperação de informações em
+documentos extensos quando não há sobreposição lexical entre consultas e evidências.
 
-- [Funcionalidades Principais](#funcionalidades-principais)
-- [Visão Geral da Arquitetura](#vis%C3%A3o-geral-da-arquitetura)
-- [Guia de Inicialização](#guia-de-inicializa%C3%A7%C3%A3o)
-  - [Pré-requisitos](#pr%C3%A9-requisitos)
-  - [1. Instalação](#1-instala%C3%A7%C3%A3o)
-  - [2. Configuração de Ambiente](#2-configura%C3%A7%C3%A3o-de-ambiente)
-- [Execução da Aplicação](#execu%C3%A7%C3%A3o-da-aplica%C3%A7%C3%A3o)
-  - [Ambiente de Desenvolvimento](#ambiente-de-desenvolvimento)
-  - [Geração de Casos de Teste (NoLiMa)](#gera%C3%A7%C3%A3o-de-casos-de-teste-nolima)
-  - [Indexação](#indexa%C3%A7%C3%A3o)
-  - [Avaliação (RAG e AgenticRAG)](#avalia%C3%A7%C3%A3o-rag-e-agenticrag)
-- [Fluxo de Desenvolvimento](#fluxo-de-desenvolvimento)
-  - [Makefile](#makefile)
-  - [Hooks de Pre-commit](#hooks-de-pre-commit)
-- [Padrão de Commits](#padr%C3%A3o-de-commits)
-  - [Formato da Mensagem](#formato-da-mensagem)
-  - [Exemplos](#exemplos)
-  - [Tipos Permitidos](#tipos-permitidos)
-- [Documentação Complementar](#documenta%C3%A7%C3%A3o-complementar)
+Para isso, comparamos o RAG tradicional e uma implementação simplificada de AgenticRAG em 7.540 instâncias com contexto
+de 8.000 tokens. O pipeline gera casos de teste estruturados a partir do conjunto de dados do NoLiMa, indexa os
+documentos e executa a avaliação dos modelos sobre os cenários gerados.
 
-## Funcionalidades Principais
+Os resultados demonstram que ambas as abordagens superam a estratégia de contexto completo original do NoLiMa. O RAG
+tradicional alcançou maior acurácia em relação ao AgenticRAG (44,91% contra 34,12%), indicando que a recuperação
+explícita reduz falhas semânticas em contextos longos, enquanto as estratégias agentivas dependem das características da
+tarefa e do processo de busca utilizado.
 
-O principal objetivo deste repositório é conduzir experimentos comparando a eficácia da abordagem RAG tradicional com a
-abordagem AgenticRAG na recuperação e geração de respostas em contextos longos sem correspondência lexical explícita. O
-repositório oferece ferramentas para a geração de datasets de avaliação, indexação de documentos e execução de
-avaliações com diferentes abordagens.
+## 2. Resultados
 
-Os experimentos baseiam-se no benchmark NoLiMa (desenvolvido por Modarressi et al.). A base de dados utilizada provém do
-[repositório original do NoLiMa](https://github.com/adobe-research/NoLiMa). Foram feitos apenas alguns ajustes na
-geração para adaptação ao experimento e, para este estudo, **apenas os casos de teste com janela de contexto de 8k
-tokens (8.000 tokens) foram executados**. A avaliação considerou 7.540 instâncias, utilizando o banco de dados vetorial
-Qdrant com o modelo de embeddings `Qwen/Qwen3-Embedding-0.6B` e o modelo de linguagem `llama3.1:8b`.
+Ao final da execução do experimento, são produzidos os seguintes artefatos:
 
-## Visão Geral da Arquitetura
+- Casos de teste gerados a partir do dataset NoLiMa;
+- Índices utilizados pelo mecanismo de recuperação;
+- Resultados das avaliações dos modelos;
+- Métricas e arquivos utilizados para análise dos experimentos.
 
-A arquitetura do experimento envolve as etapas de geração de dados base, indexação de contexto para recuperação, e
-orquestração de chamadas aos modelos de linguagem tanto no fluxo tradicional quanto com agentes.
+______________________________________________________________________
 
-![Visão Geral da Arquitetura](caminho/para/imagem.png)
+## 3. Estrutura do Repositório
 
-## Guia de Inicialização
+```text
+.
+├── data/                     # Scripts para download dos dados
+├── resources/                # (Gerado na execução) Diretório com os casos de teste
+│   └── data/
+│       ├── haystack/
+│       └── needlesets/
+├── src/
+│   ├── NoLiMa/               # Geração dos casos de teste
+│   ├── experiments/          # Pipelines e execução de testes
+│   ├── metrics/              # Análise estatística e de métricas
+│   └── shared/               # Módulos, schemas e utilitários compartilhados
+├── Makefile
+└── README.md
+```
 
-### Pré-requisitos
+## 4. Ambiente Experimental
 
-- [Docker](https://www.docker.com/)
-- [Docker Compose v2](https://docs.docker.com/compose/)
-- [uv](https://docs.astral.sh/uv/getting-started/installation/)
+O experimento foi executado na seguinte configuração:
 
-### 1. Instalação
+| Recurso | Configuração |
+| -- | -- |
+| Processador | 8 núcleos / 16 threads |
+| Memória RAM | 64 GB |
+| GPU | NVIDIA GeForce RTX 3060 Ti (8 GB VRAM) |
+
+Nessa configuração, a execução completa do experimento levou aproximadamente **14 horas**.
+
+______________________________________________________________________
+
+## 5. Base de Dados
+
+Os dados utilizados neste projeto foram obtidos do repositório oficial do **NoLiMa**.
+
+Repositório oficial:
+
+https://github.com/adobe-research/NoLiMa
+
+## 6. Reprodução do Experimento
+
+### 1. Instalação das dependências
+
+Na raiz do projeto, execute:
 
 ```bash
-git clone <repositorio>
-cd <repositorio>
 make init
 ```
 
-### 2. Configuração de Ambiente
+______________________________________________________________________
 
-TODO
+### 2. Download do dataset
 
-## Execução da Aplicação
+Execute:
 
-### Ambiente de Desenvolvimento
+```bash
+./data/download_NoLiMa_data.sh
+```
 
-1. **Subir os contêineres do Docker** Execute o seguinte comando para iniciar os serviços configurados no
-   `docker-compose.dev.yml`:
+Caso ocorra erro de permissão:
 
-   ```bash
-   make up
-   ```
+```bash
+chmod +x ./data/download_NoLiMa_data.sh
+./data/download_NoLiMa_data.sh
+```
 
-   > Isso equivale a: `docker compose -f docker-compose.dev.yml --env-file .env up -d`
+Após o download, organize os arquivos conforme abaixo:
 
-### Geração de Casos de Teste (NoLiMa)
+```text
+resources/
+└── data/
+    ├── haystack/
+    └── needlesets/
+```
 
-Para gerar casos de teste a partir dos dados em `resources/data/haystack` e `resources/data/needlesets` (conforme o
-NoLiMa original), execute:
+______________________________________________________________________
+
+### 3. Geração dos casos de teste
 
 ```bash
 make nolima-tests
 ```
 
-### Indexação
+______________________________________________________________________
 
-Para realizar a indexação dos contextos dos casos de teste previamente gerados, utilize:
+### 4. Indexação
 
 ```bash
 make index
 ```
 
-### Avaliação (RAG e AgenticRAG)
+______________________________________________________________________
 
-Para gerar as avaliações com RAG e AgenticRAG pelos modelos configurados, execute:
+### 5. Avaliação dos modelos
 
 ```bash
 make eval
 ```
 
-## Fluxo de Desenvolvimento
+______________________________________________________________________
 
-### Makefile
+## Créditos
 
-Não é obrigatório as aplicações serem executadas pelos targets definidos no `Makefile`, sendo possível utilizar
-diretamente os comandos nas referentes aplicações, e, obtendo o mesmo resultado. Para verificar os comandos disponiveis,
-basta fazer `make help` na pasta raiz.
+Este projeto utiliza os dados e adapta a metodologia proposta por:
 
-### Hooks de Pre-commit
+**Modarressi et al.**
 
-O projeto utiliza `pre-commit` com validações do `ruff` e conformidade de **Conventional Commits**.
+Repositório original:
 
-```bash
-pre-commit install
-```
-
-## Padrão de Commits
-
-Este projeto segue o padrão [Conventional Commits](https://www.conventionalcommits.org/pt-br/v1.0.0/), o que permite uma
-melhor organização do histórico de alterações e possibilita automações como geração de changelogs.
-
-### Formato da Mensagem
-
-tipo(escopo opcional): descrição breve
-
-### Exemplos
-
-- feat(api): adiciona endpoint de login
-- fix(ui): corrige bug de alinhamento no botão
-- docs: atualiza instruções de instalação
-- refactor(core): melhora performance do parser
-
-### Tipos Permitidos
-
-- `feat`: nova funcionalidade
-- `fix`: correção de bug
-- `docs`: mudanças na documentação
-- `style`: formatação (sem alteração de código)
-- `refactor`: refatorações que não alteram o comportamento
-- `test`: adição ou modificação de testes
-- `chore`: tarefas de manutenção (build, configs, etc)
-
-Commits fora desse padrão serão rejeitados automaticamente pelo hook de pré-commit.
-
-Para aplicar os hooks corretamente, é necessário que o pre-commit esteja corretamente configurado.
-
-## Documentação Complementar
-
-Para informações detalhadas sobre a arquitetura, utilização da API e diretrizes de contribuição, consulte os documentos
-disponíveis no diretório **`/docs`**.
+https://github.com/adobe-research/NoLiMa
