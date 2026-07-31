@@ -32,7 +32,7 @@ async def run_experiment():
     model_name = os.getenv("EMBEDDING_MODEL", "Qwen/Qwen3-Embedding-0.6B")
     embeddings = get_embeddings(provider=provider, model_name=model_name)
 
-    base_dir = Path("resources/data/results_test/CL8K")
+    base_dir = Path("resources/data/CL8K")
 
     if not base_dir.exists() or not base_dir.is_dir():
         logger.error(f"Diretório base não encontrado ou inválido: {base_dir}")

@@ -2,7 +2,7 @@ model_name: "test"
 model_configs_dir: "./model_configs/"
 needle_set_path: "../../resources/data/needlesets/needle_set.json"
 haystack_dir: "../../resources/data/haystack/rand_shuffle"
-parent_results_dir: "..//resources/data/resultts/CL8K/"
+parent_results_dir: "../resources/data/CL8K/"
 context_length: 8000
 document_depth_percent_min: 0
 document_depth_percent_max: 100

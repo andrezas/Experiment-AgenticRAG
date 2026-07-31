@@ -33,7 +33,7 @@ async def run_evaluation():
     trad_pipeline = NaiveRAG(llm, qdrant_storage, embeddings)
     agen_pipeline = AgenticRAG(llm, qdrant_storage, embeddings)
 
-    base_dir = Path("resources/data/results_test/CL8K")
+    base_dir = Path("resources/data/CL8K")
 
     if not base_dir.exists() or not base_dir.is_dir():
         logger.error(f"Diretório base não encontrado: {base_dir}")
